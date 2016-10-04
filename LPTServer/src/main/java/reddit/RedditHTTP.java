@@ -27,7 +27,7 @@ public class RedditHTTP {
 
     public RedditToken redditToken;
     //getLPTSubreddit variables
-    private final String LPTSubredditURL = "https://oauth.reddit.com/r/LifeProTips/ ";
+    private final String LPTSubredditURL = "https://oauth.reddit.com/r/LifeProTips/?limit=5";
 
     public void getToken() throws Exception {
         URL getTokenURL = new URL(accessTokenURL);

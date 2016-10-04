@@ -3,9 +3,12 @@ package firebase;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.*;
+import com.google.firebase.tasks.OnCompleteListener;
+import com.google.firebase.tasks.Task;
 
 import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by Vishal Rathod on 2016-10-02.
@@ -40,8 +43,14 @@ public class initFirebaseRedditDatabase {
         return this.ref;
     }
 
-    public void storeThreadsinDatabase(HashMap threads) {
-        //System.out.println(threads);
-        this.ref.setValue(threads);
+    public void storeThreadsinDatabase(HashMap threads) throws Exception {
+        final CountDownLatch sync = new CountDownLatch(1);
+        this.ref.setValue(threads)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(Task<Void> task) {
+                        sync.countDown();
+                    }
+                });
+        sync.await();
     }
 }
