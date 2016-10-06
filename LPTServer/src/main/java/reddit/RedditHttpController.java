@@ -1,8 +1,10 @@
 package reddit;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.util.Properties;
 
 /**
  * Created by Vishal Rathod on 2016-10-01.

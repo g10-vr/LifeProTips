@@ -2,9 +2,11 @@ package reddit;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Properties;
 
 import firebase.StoreLPTSubreddit;
 import org.apache.commons.codec.binary.Base64;
@@ -18,28 +20,21 @@ import static java.lang.System.in;
  * Created by Vishal Rathod on 2016-10-01.
  */
 public class RedditHTTP {
-    //getToken variables
-    private final String accessTokenURL = "https://www.reddit.com/api/v1/access_token";
-    private final String clientId = "6rU4Pl3kEnJolw";
-    private final String clientSecret = "PQS4fmA_Ez_4heiklEG9KeJ4Poc";
-    private final String myUsername = "vvvvvman";
-    private final String myPassword = "THEamazingspiderman773";
-    private final String userAgent = "LifeProTips_Script/0.1 by vvvvvman";
-
+    private String accessTokenURL, clientId, clientSecret, username, password, userAgent;
     public RedditToken redditToken;
-    //getLPTSubreddit variables
-    private final String LPTSubredditURL = "https://oauth.reddit.com/r/LifeProTips/?limit=5";
+    private final String LPTSubredditURL = "https://oauth.reddit.com/r/LifeProTips/";
 
     /*
     Retrieve access token from Reddit API
      */
     public void getToken() throws Exception {
+        getRedditProperties();
         URL getTokenURL = new URL(accessTokenURL);
         HttpURLConnection redditConnection = (HttpURLConnection) getTokenURL.openConnection();
 
         String redditAuthDetails = clientId + ":" + clientSecret;
         String redditAuth = "Basic " + new String(new Base64().encode( redditAuthDetails.getBytes() ));
-        String redditURLParameters = "grant_type=password&username=" + myUsername + "&password=" + myPassword;
+        String redditURLParameters = "grant_type=password&username=" + username + "&password=" + password;
 
         redditConnection.setRequestMethod("POST");
         redditConnection.setRequestProperty("User-Agent", userAgent);
@@ -116,5 +111,18 @@ public class RedditHTTP {
     public String getAfterId(String subredditJSONText) throws Exception {
         JSONObject subredditJSON = new JSONObject(subredditJSONText);
         return subredditJSON.getJSONObject("data").getString("after");
+    }
+
+    public void getRedditProperties() throws Exception {
+        Properties reddit = new Properties();
+        try (FileReader in = new FileReader("../LPTServer/src/main/resources/reddit.properties")) {
+            reddit.load(in);
+        }
+        this.clientId = reddit.getProperty("clientId");
+        this.clientSecret = reddit.getProperty("clientSecret");
+        this.accessTokenURL = reddit.getProperty("accessTokenURL");
+        this.username = reddit.getProperty("username");
+        this.password = reddit.getProperty("password");
+        this.userAgent = reddit.getProperty("userAgent");
     }
 }
