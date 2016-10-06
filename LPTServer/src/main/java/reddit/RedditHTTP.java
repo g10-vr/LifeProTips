@@ -23,7 +23,11 @@ public class RedditHTTP {
     private String accessTokenURL, clientId, clientSecret, username, password, userAgent;
     public RedditToken redditToken;
     private final String LPTSubredditURL = "https://oauth.reddit.com/r/LifeProTips/";
+    StoreLPTSubreddit storeSubreddit;
 
+    public RedditHTTP() throws Exception {
+        storeSubreddit = new StoreLPTSubreddit();
+    }
     /*
     Retrieve access token from Reddit API
      */
@@ -74,10 +78,11 @@ public class RedditHTTP {
      */
     public void getLPTSubreddit(String after) throws Exception {
         URL getLPTSubredditURL;
-        if(after != null && !after.isEmpty())
+        if(checkAfterIDNull(after))
             getLPTSubredditURL = new URL(LPTSubredditURL + "?after=" + after);
         else
             getLPTSubredditURL = new URL(LPTSubredditURL);
+        System.out.println(getLPTSubredditURL.toString());
 
         HttpURLConnection redditConnection = (HttpURLConnection) getLPTSubredditURL.openConnection();
 
@@ -86,11 +91,10 @@ public class RedditHTTP {
         redditConnection.setRequestProperty("Authorization", redditToken.getTokenType() + " " + redditToken.getAccessToken());
 
         int responseCode = redditConnection.getResponseCode();
-        System.out.println("\nSending 'GET' request to URL : " + getLPTSubredditURL);
-        System.out.println("Response Code : " + responseCode);
+        //System.out.println("\nSending 'GET' request to URL : " + getLPTSubredditURL);
+        //System.out.println("Response Code : " + responseCode);
 
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(redditConnection.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(redditConnection.getInputStream()));
         String inputLine;
         StringBuffer redditResponseCode = new StringBuffer();
 
@@ -99,18 +103,35 @@ public class RedditHTTP {
         }
         in.close();
 
-        StoreLPTSubreddit storeSubreddit = new StoreLPTSubreddit();
+        //StoreLPTSubreddit storeSubreddit = new StoreLPTSubreddit();
         storeSubreddit.storeLPTs(new JSONObject( redditResponseCode.toString() ));
-        /*String afterId = getAfterId(redditResponseCode.toString());
-        if(afterId != null && !afterId.isEmpty()) {
-            System.out.println("After ID : " + afterId);
+        String afterId = getAfterId(redditResponseCode.toString());
+        //String beforeId = getBeforeId(redditResponseCode.toString());
+        //System.out.println(afterId);
+        if(checkAfterIDNull(afterId)) {
+            //System.out.println("After ID : " + afterId);
             getLPTSubreddit(afterId);
-        }*/
+        }
+        else
+            System.out.println("Finished updating database with LifeProTips threads");
     }
 
     public String getAfterId(String subredditJSONText) throws Exception {
         JSONObject subredditJSON = new JSONObject(subredditJSONText);
         return subredditJSON.getJSONObject("data").getString("after");
+    }
+
+    public boolean checkAfterIDNull(String afterId) {
+        String nullCheck = null;
+        if(afterId == null || afterId.equals(nullCheck) || afterId.equals("null"))
+            return false;
+        else
+            return true;
+    }
+
+    public String getBeforeId(String subredditJSONText) throws Exception {
+        JSONObject subredditJSON = new JSONObject(subredditJSONText);
+        return subredditJSON.getJSONObject("data").getString("before");
     }
 
     public void getRedditProperties() throws Exception {

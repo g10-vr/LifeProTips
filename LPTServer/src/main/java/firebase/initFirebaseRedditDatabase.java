@@ -46,7 +46,19 @@ public class initFirebaseRedditDatabase {
     public void storeThreadsinDatabase(HashMap threads) throws Exception {
         final CountDownLatch sync = new CountDownLatch(1);
         DatabaseReference threadsRef = ref.child("threads");
-        threadsRef.setValue(threads)
+        threadsRef.push().setValue(threads)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(Task<Void> task) {
+                        sync.countDown();
+                    }
+                });
+        sync.await(); //Wait until storing data in database is complete
+    }
+
+    public void storeThreadinDatabase(String threadID, HashMap thread) throws Exception {
+        final CountDownLatch sync = new CountDownLatch(1);
+        DatabaseReference threadsRef = ref.child("threads");
+        threadsRef.child(threadID).setValue(thread)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(Task<Void> task) {
                         sync.countDown();

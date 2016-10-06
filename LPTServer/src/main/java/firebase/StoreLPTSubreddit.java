@@ -9,11 +9,15 @@ import java.util.HashMap;
  * Created by Vishal Rathod on 2016-10-03.
  */
 public class StoreLPTSubreddit {
+    initFirebaseRedditDatabase firebaseRedditDatabase;
+    public StoreLPTSubreddit() throws Exception {
+        this.firebaseRedditDatabase = new initFirebaseRedditDatabase(); //firebase database instance
+    }
     /*
     Store selected LifeProTip threads in firebase database
      */
     public void storeLPTs(JSONObject LPTSubreddit) throws Exception {
-        initFirebaseRedditDatabase firebaseRedditDatabase = new initFirebaseRedditDatabase(); //firebase database instance
+        //initFirebaseRedditDatabase firebaseRedditDatabase = new initFirebaseRedditDatabase(); //firebase database instance
         JSONArray threadsOnPage = LPTSubreddit.getJSONObject("data").getJSONArray("children");
         HashMap<String, Object> threadCollection = new HashMap<String, Object>(); //collection of threads to store in database
 
@@ -22,12 +26,13 @@ public class StoreLPTSubreddit {
                 if( !threadsOnPage.getJSONObject(iterateThreads).getJSONObject("data").getString("link_flair_text").contains("Request") ) {
                     HashMap<String, Object> threadDetails = new HashMap<String, Object>();
                     threadDetails = getThreadDetails(threadsOnPage.getJSONObject(iterateThreads));
-                    collectThreadsToBeStored(threadCollection, threadDetails);
+                    //collectThreadsToBeStored(threadCollection, threadDetails);
+                    firebaseRedditDatabase.storeThreadinDatabase(threadDetails.get("id").toString(), threadDetails); //store thread
                     //firebaseRedditDatabase.storeThreadID( threadsOnPage.getJSONObject(iterateThreads).getJSONObject("data").getString("id") );
                 }
             }
         }
-        firebaseRedditDatabase.storeThreadsinDatabase(threadCollection); //store threads
+        //firebaseRedditDatabase.storeThreadsinDatabase(threadCollection); //store threads
     }
 
     /*
