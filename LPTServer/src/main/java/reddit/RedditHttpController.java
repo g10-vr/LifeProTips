@@ -12,7 +12,7 @@ public class RedditHttpController {
         RedditHTTP Reddit = new RedditHTTP();
         try {
             Reddit.getToken();
-            Reddit.getLPTSubreddit();
+            Reddit.getLPTSubreddit(null);
         }
         catch(MalformedURLException url_e){
             System.out.println(url_e);

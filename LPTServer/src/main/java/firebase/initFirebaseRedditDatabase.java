@@ -25,7 +25,7 @@ public class initFirebaseRedditDatabase {
 
         this.ref = com.google.firebase.database.FirebaseDatabase
                 .getInstance()
-                .getReference("threads");
+                .getReference("subreddit");
         this.ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -45,12 +45,25 @@ public class initFirebaseRedditDatabase {
 
     public void storeThreadsinDatabase(HashMap threads) throws Exception {
         final CountDownLatch sync = new CountDownLatch(1);
-        this.ref.setValue(threads)
+        DatabaseReference threadsRef = ref.child("threads");
+        threadsRef.setValue(threads)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(Task<Void> task) {
                         sync.countDown();
                     }
                 });
-        sync.await();
+        sync.await(); //Wait until storing data in database is complete
+    }
+
+    public void storeThreadID(String threadID) throws Exception {
+        final CountDownLatch sync = new CountDownLatch(1);
+        DatabaseReference threadsRef = ref.child("thread_id");
+        threadsRef.push().setValue(threadID)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(Task<Void> task) {
+                        sync.countDown();
+                    }
+                });
+        sync.await(); //Wait until storing data in database is complete
     }
 }

@@ -18,9 +18,7 @@ public class RedditToken {
         return this.accessToken;
     }
 
-    public String getTokenType() {
-        return this.tokenType;
-    }
+    public String getTokenType() { return this.tokenType; }
 
     public Double getExpiresIn() {
         return this.expiresIn;
@@ -28,5 +26,17 @@ public class RedditToken {
 
     public String getScope() {
         return this.scope;
+    }
+
+    @Override
+    public String toString() {
+        return "{\n\"access_token\": " + accessToken +
+                ",\n" +
+                "\"token_type\": " + tokenType +
+                ",\n" +
+                "\"expires_in\": " + expiresIn +
+                ",\n" +
+                "\"scope\": " + scope +
+                "\n }";
     }
 }

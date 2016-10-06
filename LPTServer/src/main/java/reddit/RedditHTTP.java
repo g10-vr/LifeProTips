@@ -8,6 +8,7 @@ import java.net.URL;
 
 import firebase.StoreLPTSubreddit;
 import org.apache.commons.codec.binary.Base64;
+import org.codehaus.jackson.JsonNode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -29,6 +30,9 @@ public class RedditHTTP {
     //getLPTSubreddit variables
     private final String LPTSubredditURL = "https://oauth.reddit.com/r/LifeProTips/?limit=5";
 
+    /*
+    Retrieve access token from Reddit API
+     */
     public void getToken() throws Exception {
         URL getTokenURL = new URL(accessTokenURL);
         HttpURLConnection redditConnection = (HttpURLConnection) getTokenURL.openConnection();
@@ -63,14 +67,23 @@ public class RedditHTTP {
         in.close();
 
         //print result
-        System.out.println(response.toString());
+        //System.out.println(response.toString());
 
         JSONObject redditAPITokenResponse = new JSONObject( response.toString() );
         redditToken = new RedditToken(redditAPITokenResponse.getString("access_token"), redditAPITokenResponse.getString("token_type"), redditAPITokenResponse.getDouble("expires_in"), redditAPITokenResponse.getString("scope"));
+        System.out.println(redditToken.toString());
     }
 
-    public void getLPTSubreddit() throws Exception {
-        URL getLPTSubredditURL = new URL(LPTSubredditURL);
+    /*
+    Retrieve LifeProTips subreddit from Reddit API
+     */
+    public void getLPTSubreddit(String after) throws Exception {
+        URL getLPTSubredditURL;
+        if(after != null && !after.isEmpty())
+            getLPTSubredditURL = new URL(LPTSubredditURL + "?after=" + after);
+        else
+            getLPTSubredditURL = new URL(LPTSubredditURL);
+
         HttpURLConnection redditConnection = (HttpURLConnection) getLPTSubredditURL.openConnection();
 
         redditConnection.setRequestMethod("GET");
@@ -93,5 +106,15 @@ public class RedditHTTP {
 
         StoreLPTSubreddit storeSubreddit = new StoreLPTSubreddit();
         storeSubreddit.storeLPTs(new JSONObject( redditResponseCode.toString() ));
+        /*String afterId = getAfterId(redditResponseCode.toString());
+        if(afterId != null && !afterId.isEmpty()) {
+            System.out.println("After ID : " + afterId);
+            getLPTSubreddit(afterId);
+        }*/
+    }
+
+    public String getAfterId(String subredditJSONText) throws Exception {
+        JSONObject subredditJSON = new JSONObject(subredditJSONText);
+        return subredditJSON.getJSONObject("data").getString("after");
     }
 }
