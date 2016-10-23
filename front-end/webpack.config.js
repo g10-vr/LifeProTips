@@ -5,7 +5,7 @@ var node_modules_dir = path.join(__dirname, 'node_modules');
 
 var config = {
   entry: {
-    app: path.resolve(__dirname, 'app/js/main.jsx'),
+    app: ['slick-carousel', path.resolve(__dirname, 'app/js/main.jsx')],
     //vendors: ['react', 'react-router', 'underscore', 'classnames']
   },
   output: {

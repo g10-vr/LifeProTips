@@ -35,7 +35,12 @@ let App = React.createClass({
 
     return(
       <div className="wrapper">
+        <TransitionGroup
+          transitionName="fade"
+          transitionEnterTimeout={1000}
+          transitionLeaveTimeout={1000} >
           {React.cloneElement(this.props.children, {key: key, data: data})}
+        </TransitionGroup>
       </div>
     );
   }
