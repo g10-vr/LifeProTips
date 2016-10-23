@@ -1,6 +1,9 @@
 import React from 'react';
 import _ from 'underscore';
 import Slider from 'react-slick';
+// import * as FontAwesome from 'react-icons/fa';
+// import FaAngleLeft from 'react-icons/fa/angle-left';
+// import FaAngleRight from 'react-icons/fa/angle-right';
 
 var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -37,7 +40,9 @@ let HomeView = React.createClass({
     infinite: true,
     speed: 500,
     slidesToShow: 1,
-    slidesToScroll: 1
+    slidesToScroll: 1,
+    // prevArrow: LPTControlLeft,
+    // nextArrow: LPTControlRight
   };
 
   var initialLPTBatch = _.toArray(this.props.data.subreddit.threads);
@@ -78,6 +83,29 @@ let HomeView = React.createClass({
   }
 });
 
+
+const LPTControlLeft = React.createClass({
+  render: function() {
+
+    return(
+      <div className="lpt-control-left">
+        <span>prev</span>
+      </div>
+    );
+  }
+});
+
+const LPTControlRight = React.createClass({
+  render: function() {
+
+    return(
+      <div className="lpt-control-right">
+        <span>next</span>
+      </div>
+    );
+  }
+});
+
 // quote/tip
 let LifeProTip = React.createClass({
   render() {
@@ -89,7 +117,7 @@ let LifeProTip = React.createClass({
           {this.props.lpt.title}
         </h1>
         <h2 className="lpt-author">
-          {this.props.lpt.author}
+          {"-" + this.props.lpt.author}
         </h2>
         <h3 className="lpt-category">
           {this.props.link_flair_text}
