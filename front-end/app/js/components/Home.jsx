@@ -12,31 +12,47 @@ let HomeView = React.createClass({
     var initialLPTBatch = _.toArray(this.props.data.subreddit.threads);
 
     return {
-      activeLPT: initialLPTBatch[0]
+      activeLPT: initialLPTBatch[0],
+      allLPTs: initialLPTBatch
     }
+  },
+
+  componentWillMount() {
+
   },
 
   render() {
 
-  console.log("this.props.data.subreddit", this.props.data.subreddit, "activeLPT", this.props.data.subreddit.threads, this.state);
-  console.log("HomeView props", this.props);
+  // console.log("this.props.data.subreddit", this.props.data.subreddit, "activeLPT", this.props.data.subreddit.threads, this.state);
+  // console.log("HomeView props", this.props);
 
   if (w < 1024) {
     var MobileAd = <AdMobileWrapper />
-
-
   } else if (w > 1024) {
     var MobileAd = false;
   }
 
   var settings = {
-    dots: true,
+    // dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1
   };
-}
+
+  var initialLPTBatch = _.toArray(this.props.data.subreddit.threads);
+
+  var activeGallery = initialLPTBatch.map(function(lpt, i){
+    // console.log(lpt);
+
+    return(
+      <div key={i}>
+        <LifeProTip data={this.props.data} routes={this.props.routes} activeLPT={this.state.activeLPT} lpt={lpt} />
+      </div>
+    )
+  }.bind(this));
+
+  // console.log("activeGallery", activeGallery);
 
     return(
       <div className="container-fluid lpt-home-view">
@@ -47,14 +63,8 @@ let HomeView = React.createClass({
         </div>
         <div className="row ">
           <div className="col-sm-12 ">
-            <LifeProTip data={this.props.data} routes={this.props.routes} activeLPT={this.state.activeLPT} />
               <Slider {...settings}>
-                <div><h3>1</h3></div>
-                <div><h3>2</h3></div>
-                <div><h3>3</h3></div>
-                <div><h3>4</h3></div>
-                <div><h3>5</h3></div>
-                <div><h3>6</h3></div>
+                {activeGallery}
               </Slider>
             </div>
           </div>
@@ -71,16 +81,19 @@ let HomeView = React.createClass({
 // quote/tip
 let LifeProTip = React.createClass({
   render() {
-    console.log("LifeProTip", this.props, this.props.activeLPT.title);
+    // console.log("LifeProTip", this.props, this.props.lpt.title);
 
     return(
       <div className="lpt-life-pro-tip-wrapper">
         <h1 className="lpt-life-pro-tip" >
-          {this.props.activeLPT.title}
+          {this.props.lpt.title}
         </h1>
         <h2 className="lpt-author">
-          {this.props.activeLPT.author}
+          {this.props.lpt.author}
         </h2>
+        <h3 className="lpt-category">
+          {this.props.link_flair_text}
+        </h3>
       </div>
     );
   }
