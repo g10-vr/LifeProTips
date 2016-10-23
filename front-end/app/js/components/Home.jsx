@@ -30,7 +30,11 @@ let HomeView = React.createClass({
   // console.log("HomeView props", this.props);
 
   if (w < 1024) {
-    var MobileAd = <AdMobileWrapper />
+    var MobileAd =
+      <div className="col-xs-12">
+        <AdMobileWrapper />
+      </div>
+      ;
   } else if (w > 1024) {
     var MobileAd = false;
   }
@@ -41,8 +45,8 @@ let HomeView = React.createClass({
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    // prevArrow: LPTControlLeft,
-    // nextArrow: LPTControlRight
+    prevArrow: <LPTControlLeft />,
+    nextArrow: <LPTControlRight />
   };
 
   var initialLPTBatch = _.toArray(this.props.data.subreddit.threads);
@@ -61,21 +65,26 @@ let HomeView = React.createClass({
 
     return(
       <div className="container-fluid lpt-home-view">
-        <div className="row ">
+        <div className="row lpt-header-wrapper">
           <div className="col-sm-12 ">
             <h1 className="lpt-logotype">life pro tips</h1>
           </div>
         </div>
-        <div className="row ">
+        <div className="row lpt-slider-wrapper">
           <div className="col-sm-12 ">
+            <div className="lpt-slider">
               <Slider {...settings}>
                 {activeGallery}
               </Slider>
             </div>
           </div>
-        <div className="row ">
-          <div className="col-sm-12 ">
+        </div>
+        <div className="row lpt-footer-wrapper">
           {MobileAd}
+          <div className="col-sm-12">
+            <div className="lpt-footer">
+
+            </div>
           </div>
         </div>
       </div>
@@ -88,8 +97,10 @@ const LPTControlLeft = React.createClass({
   render: function() {
 
     return(
-      <div className="lpt-control-left">
-        <span>prev</span>
+      <div className="lpt-control-left"
+        {...this.props}
+        >
+        <img src="./assets/icons/nav-arrow-left.png" />
       </div>
     );
   }
@@ -99,8 +110,10 @@ const LPTControlRight = React.createClass({
   render: function() {
 
     return(
-      <div className="lpt-control-right">
-        <span>next</span>
+      <div className="lpt-control-right"
+        {...this.props}
+        >
+        <img src="./assets/icons/nav-arrow-right.png" />
       </div>
     );
   }
@@ -117,7 +130,7 @@ let LifeProTip = React.createClass({
           {this.props.lpt.title}
         </h1>
         <h2 className="lpt-author">
-          {"-" + this.props.lpt.author}
+          {"- " + this.props.lpt.author}
         </h2>
         <h3 className="lpt-category">
           {this.props.link_flair_text}
