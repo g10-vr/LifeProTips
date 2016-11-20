@@ -1,0 +1,11 @@
+
+front-end/node_modules/
+front-end/dist/
+
+### Intellij ###
+.idea/workspace.xml
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml
+*.iml
